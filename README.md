@@ -2,8 +2,8 @@
 ## WARNING: barebones functionality.
 ## Turnable is a music player...
 - That plays raw online audio.
-- That is build on compose.
-- That is built entirely in kotlin.
+- That is built in compose.
+- That is built in kotlin.
 - That likes collecting every single audio track.
 - That is decentralized and not attached to any music library.
 - That supports many formats.
