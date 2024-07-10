@@ -196,7 +196,6 @@ fun Player(modifier: Modifier = Modifier, player: Player?) {
     var isPlaying by remember { mutableStateOf(player?.isPlaying) }
     var currentTrack by remember { mutableStateOf(player?.mediaMetadata?.title) }
     var currentArtist by remember { mutableStateOf(player?.mediaMetadata?.artist) }
-    var albumCover by remember { mutableStateOf(player?.mediaMetadata?.artworkUri) }
     Column(verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
         Card(onClick = { /*TODO*/ }, modifier = Modifier.size(270.dp)) {
 
@@ -285,19 +284,20 @@ fun Settings(player: Player?) {
 
 @Composable
 fun Queue(player: Player?) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 16.dp)) {
         if (player?.mediaItemCount == 0){
             Text(text = "Queue is empty!")
-        }
-        LazyColumn (modifier = Modifier.fillMaxSize()) {
-            player?.mediaItemCount?.let {
-                items(it){  index ->
-                    TrackCard(title = player.getMediaItemAt(index).mediaMetadata.title.toString(), artist = player.getMediaItemAt(index).mediaMetadata.artist.toString(), imageUri = player.getMediaItemAt(index).mediaMetadata.artworkUri)
+        } else {
+            LazyColumn (modifier = Modifier.fillMaxWidth()) {
+                player?.mediaItemCount?.let {
+                    items(it){  index ->
+                        TrackCard(title = player.getMediaItemAt(index).mediaMetadata.title.toString(), artist = player.getMediaItemAt(index).mediaMetadata.artist.toString(), imageUri = player.getMediaItemAt(index).mediaMetadata.artworkUri)
+                    }
                 }
             }
-        }
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "Clear all")
+            Button(onClick = { player?.clearMediaItems() }, modifier = Modifier.fillMaxWidth()) {
+                Text(text = "Clear all")
+            }
         }
     }
 }
@@ -312,7 +312,10 @@ fun togglePlayback(player: Player?){
     }
 }
 fun toggleRepeatStates(player: Player?) {
-    
+    // TODO
+}
+fun toggleShuffle(player: Player?): Unit {
+    // TODO
 }
 @Preview(showBackground = true, apiLevel = 34)
 @Composable
