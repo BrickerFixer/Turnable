@@ -1,6 +1,6 @@
 # Turnable
 ## WARNING: barebones functionality.
-Turnable is a music player...
+## Turnable is a music player...
 - That plays raw online audio.
 - That is build on compose.
 - That is built entirely in kotlin.
