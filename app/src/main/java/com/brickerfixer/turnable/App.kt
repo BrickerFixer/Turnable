@@ -7,7 +7,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.room.Room.databaseBuilder
 
 class App : Application() {
-    var database: TrackDatabase? = null
+    private var database: TrackDatabase? = null
 
     @OptIn(UnstableApi::class)
     override fun onCreate() {

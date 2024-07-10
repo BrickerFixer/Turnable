@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.devtools.ksp")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -50,6 +52,11 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.material.icons.extended)
+    // Glide(???)
+    implementation(libs.compose)
+    annotationProcessor(libs.compiler)
+    implementation(libs.glide)
     // Kotlin
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
