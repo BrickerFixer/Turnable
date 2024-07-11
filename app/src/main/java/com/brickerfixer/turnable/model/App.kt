@@ -1,4 +1,4 @@
-package com.brickerfixer.turnable
+package com.brickerfixer.turnable.model
 
 import android.app.Application
 import android.content.Intent

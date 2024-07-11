@@ -1,4 +1,4 @@
-package com.brickerfixer.turnable
+package com.brickerfixer.turnable.view
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
@@ -8,9 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -33,19 +31,13 @@ import com.google.common.util.concurrent.MoreExecutors
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.captionBarPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.automirrored.rounded.QueueMusic
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.rounded.CloudQueue
 import androidx.compose.material.icons.rounded.PlayCircle
-import androidx.compose.material.icons.rounded.QueueMusic
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Source
 import androidx.compose.material3.Button
@@ -55,13 +47,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -70,6 +59,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.brickerfixer.turnable.model.ExoplayerService
+import com.brickerfixer.turnable.R
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 
 class MainActivity : ComponentActivity() {
@@ -103,16 +94,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/*
-Three whales that manage app displaying and navigation.
-One is God. God holds the important role of keeping navigation together.
-*/
 
 @kotlin.OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Main(player: Player?) {
     val navController = rememberNavController()
-    Scaffold(bottomBar = {BottomNavigationBar(navController = navController)}) { innerPadding ->
+    Scaffold(bottomBar = { BottomNavigationBar(navController = navController) }) { innerPadding ->
         NavHost(navController, startDestination = NavRoutes.Player.route, modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)) {

@@ -1,10 +1,9 @@
-package com.brickerfixer.turnable
+package com.brickerfixer.turnable.view
 
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,8 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.Placeholder
-import com.bumptech.glide.integration.ktx.Status
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @SuppressLint("SimpleDateFormat")

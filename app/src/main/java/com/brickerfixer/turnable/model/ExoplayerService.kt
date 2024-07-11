@@ -1,4 +1,4 @@
-package com.brickerfixer.turnable
+package com.brickerfixer.turnable.model
 
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C

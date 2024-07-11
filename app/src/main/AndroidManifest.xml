@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Turnable"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Turnable"
@@ -24,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".ExoplayerService"
+        <service android:name=".model.ExoplayerService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="true"
             tools:ignore="ExportedService">

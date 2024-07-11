@@ -1,4 +1,4 @@
-package com.brickerfixer.turnable
+package com.brickerfixer.turnable.model
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
