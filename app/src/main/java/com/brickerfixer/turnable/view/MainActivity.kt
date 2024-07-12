@@ -1,11 +1,8 @@
 package com.brickerfixer.turnable.view
 
-import android.annotation.SuppressLint
-import android.content.ComponentName
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -21,13 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
 import com.brickerfixer.turnable.ui.theme.TurnableTheme
-import com.google.common.util.concurrent.MoreExecutors
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -42,71 +34,56 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Source
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.brickerfixer.turnable.model.ExoplayerService
 import com.brickerfixer.turnable.R
+import com.brickerfixer.turnable.viewmodel.PlayerViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 
 class MainActivity : ComponentActivity() {
+    private lateinit var playerViewModel: PlayerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-    }
-
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(UnstableApi::class)
-    override fun onStart() {
-        super.onStart()
-        val sessionToken = SessionToken(this, ComponentName(this, ExoplayerService::class.java))
-        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-        controllerFuture.addListener(
-            {
-                // Call controllerFuture.get() to retrieve the MediaController.
-                // MediaController implements the Player interface, so it can be
-                // attached to the PlayerView UI component.
-                setContent {
-                    TurnableTheme {
-                        Main(
-                            player = controllerFuture.get()
-                        )
-                    }
+        playerViewModel = ViewModelProvider(this).get(PlayerViewModel::class.java)
+        playerViewModel.initializeMediaController(this) {
+            setContent {
+                TurnableTheme {
+                    Main(playerViewModel)
                 }
-            },
-            MoreExecutors.directExecutor()
-        )
+            }
+        }
     }
 }
 
 
-@kotlin.OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Main(player: Player?) {
+fun Main(playerModel: PlayerViewModel) {
     val navController = rememberNavController()
     Scaffold(bottomBar = { BottomNavigationBar(navController = navController) }) { innerPadding ->
         NavHost(navController, startDestination = NavRoutes.Player.route, modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)) {
-            composable(NavRoutes.Player.route) { Player(player = player) }
-            composable(NavRoutes.Queue.route) { Queue(player = player)  }
-            composable(NavRoutes.Sources.route) { Sources(player = player) }
-            composable(NavRoutes.Settings.route) { Settings(player = player) }
+            composable(NavRoutes.Player.route) { Player(playerModel = playerModel) }
+            composable(NavRoutes.Queue.route) { Queue(playerModel = playerModel)  }
+            composable(NavRoutes.Sources.route) { Sources(playerModel = playerModel) }
+            composable(NavRoutes.Settings.route) { Settings() }
         }
     }
 }
@@ -179,10 +156,11 @@ sealed class NavRoutes(val route: String) {
 
 @kotlin.OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun Player(modifier: Modifier = Modifier, player: Player?) {
-    var isPlaying by remember { mutableStateOf(player?.isPlaying) }
-    var currentTrack by remember { mutableStateOf(player?.mediaMetadata?.title) }
-    var currentArtist by remember { mutableStateOf(player?.mediaMetadata?.artist) }
+fun Player(modifier: Modifier = Modifier, playerModel: PlayerViewModel) {
+    val isPlaying by playerModel.isPlaying.observeAsState(false)
+    val isShuffling by playerModel.shuffleModeEnabled.observeAsState(false)
+    val currentTrack by playerModel.currentTrack.observeAsState("")
+    val currentArtist by playerModel.currentArtist.observeAsState("")
     Column(verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
         Card(onClick = { /*TODO*/ }, modifier = Modifier.size(270.dp)) {
 
@@ -195,21 +173,21 @@ fun Player(modifier: Modifier = Modifier, player: Player?) {
             IconButton(onClick = {  }) {
                 Icon(painter = painterResource(id = R.drawable.repeat_24px), contentDescription = "Repeat")
             }
-            IconButton(onClick = { player?.seekToPreviousMediaItem() }) {
+            IconButton(onClick = { playerModel.seekToPrevious() }) {
                 Icon(painter = painterResource(id = R.drawable.skip_previous_24px), contentDescription = "Previous")
             }
-            FloatingActionButton(onClick = { togglePlayback(player) }) {
-                if (isPlaying == true){
+            FloatingActionButton(onClick = { playerModel.togglePlayback() }) {
+                if (isPlaying){
                     Icon(painter = painterResource(id = R.drawable.pause_24px), contentDescription = "Play")
                 } else {
                     Icon(painter = painterResource(id = R.drawable.play_arrow_24px), contentDescription = "Play")
                 }
             }
-            IconButton(onClick = { player?.seekToNextMediaItem() }) {
+            IconButton(onClick = { playerModel.seekToNext() }) {
                 Icon(painter = painterResource(id = R.drawable.skip_next_24px), contentDescription = "Previous")
             }
-            IconButton(onClick = { player?.shuffleModeEnabled = !player?.shuffleModeEnabled!! }) {
-                if (player?.shuffleModeEnabled == true){
+            IconButton(onClick = { playerModel.toggleShuffle() }) {
+                if (isShuffling){
                     Icon(painter = painterResource(id = R.drawable.shuffle_on_24px), contentDescription = "Shuffle On")
                 } else {
                     Icon(painter = painterResource(id = R.drawable.shuffle_24px), contentDescription = "Shuffle Off")
@@ -220,7 +198,7 @@ fun Player(modifier: Modifier = Modifier, player: Player?) {
 }
 
 @Composable
-fun Sources(player: Player?) {
+fun Sources(playerModel: PlayerViewModel) {
     Column (modifier = Modifier
         .padding(16.dp)
         .fillMaxSize()) {
@@ -254,7 +232,7 @@ fun Sources(player: Player?) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
-            Button(onClick = { player?.addMediaItem(MediaItem.fromUri(text)) }, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = { playerModel.addMediaItem(text) }, modifier = Modifier.fillMaxWidth()) {
                 Icon(painter = painterResource(id = R.drawable.add_circle_24px), contentDescription = "Add")
                 Text(text = "Add")
             }
@@ -263,51 +241,27 @@ fun Sources(player: Player?) {
 }
 
 @Composable
-fun Settings(player: Player?) {
+fun Settings() {
     Column (modifier = Modifier.fillMaxSize()) {
 
     }
 }
 
 @Composable
-fun Queue(player: Player?) {
+fun Queue(playerModel: PlayerViewModel) {
+    val itemCount by playerModel.mediaItemCount.observeAsState(0)
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 16.dp)) {
-        if (player?.mediaItemCount == 0){
+        if (itemCount == 0){
             Text(text = "Queue is empty!")
         } else {
             LazyColumn (modifier = Modifier.fillMaxWidth()) {
-                player?.mediaItemCount?.let {
-                    items(it){  index ->
-                        TrackCard(title = player.getMediaItemAt(index).mediaMetadata.title.toString(), artist = player.getMediaItemAt(index).mediaMetadata.artist.toString(), imageUri = player.getMediaItemAt(index).mediaMetadata.artworkUri)
-                    }
+                items(itemCount){ index ->
+                    TrackCard(title = playerModel.getMediaItemAt(index)?.mediaMetadata?.artist.toString(), artist = playerModel.getMediaItemAt(index)?.mediaMetadata?.artist.toString(), imageUri = playerModel.getMediaItemAt(index)?.mediaMetadata?.artworkUri)
                 }
             }
-            Button(onClick = { player?.clearMediaItems() }, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = { playerModel.clearMediaItems() }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Clear all")
             }
         }
-    }
-}
-
-// Utility functions
-
-fun togglePlayback(player: Player?){
-    when(player?.isPlaying){
-        true -> player.pause()
-        false -> player.play()
-        null -> TODO()
-    }
-}
-fun toggleRepeatStates(player: Player?) {
-    // TODO
-}
-fun toggleShuffle(player: Player?): Unit {
-    // TODO
-}
-@Preview(showBackground = true, apiLevel = 34)
-@Composable
-fun GreetingPreview() {
-    TurnableTheme {
-        Main(player = null)
     }
 }

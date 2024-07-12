@@ -18,6 +18,7 @@ roomKtx = "2.6.1"
 media3Ui = "1.3.1"
 media3Session = "1.3.1"
 navigationCompose = "2.7.7"
+runtimeLivedata = "1.6.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +49,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3Ui" }
 androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3Session" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

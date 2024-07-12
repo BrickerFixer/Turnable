@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     // Glide(???)
     implementation(libs.compose)
+    implementation(libs.androidx.runtime.livedata)
     annotationProcessor(libs.compiler)
     implementation(libs.glide)
     // Kotlin
