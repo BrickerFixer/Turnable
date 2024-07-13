@@ -17,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.media3.common.Player
 import com.brickerfixer.turnable.ui.theme.TurnableTheme
 import androidx.activity.ComponentActivity
@@ -44,6 +43,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -54,14 +54,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.brickerfixer.turnable.R
 import com.brickerfixer.turnable.viewmodel.PlayerViewModel
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 
 class MainActivity : ComponentActivity() {
     private lateinit var playerViewModel: PlayerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        playerViewModel = ViewModelProvider(this).get(PlayerViewModel::class.java)
+        playerViewModel = ViewModelProvider(this)[PlayerViewModel::class.java]
         playerViewModel.initializeMediaController(this) {
             setContent {
                 TurnableTheme {
@@ -148,37 +147,54 @@ data class BarItem(
 )
 
 sealed class NavRoutes(val route: String) {
-    object Player : NavRoutes("player")
-    object Queue : NavRoutes("queue")
-    object Sources : NavRoutes("sources")
-    object Settings : NavRoutes("settings")
+    data object Player : NavRoutes("player")
+    data object Queue : NavRoutes("queue")
+    data object Sources : NavRoutes("sources")
+    data object Settings : NavRoutes("settings")
 }
 
-@kotlin.OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun Player(modifier: Modifier = Modifier, playerModel: PlayerViewModel) {
+fun Player(playerModel: PlayerViewModel) {
     val isPlaying by playerModel.isPlaying.observeAsState(false)
     val isShuffling by playerModel.shuffleModeEnabled.observeAsState(false)
+    val repeatState by playerModel.repeatMode.observeAsState(Player.REPEAT_MODE_OFF)
     val currentTrack by playerModel.currentTrack.observeAsState("")
     val currentArtist by playerModel.currentArtist.observeAsState("")
-    Column(verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
+    Column(verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
         Card(onClick = { /*TODO*/ }, modifier = Modifier.size(270.dp)) {
 
         }
         Column (horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = currentTrack.toString(), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold)
-            Text(text = currentArtist.toString(), Modifier.alpha(0.5f))
+            if (currentTrack != "" && currentArtist != ""){
+                Text(text = currentTrack.toString(), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                Text(text = currentArtist.toString(), Modifier.alpha(0.5f), textAlign = TextAlign.Center)
+            } else {
+                Text(text = "Nothing playing", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                Text(text = "Please add a raw audio source through sources tab", Modifier.alpha(0.5f), textAlign = TextAlign.Center)
+            }
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = {  }) {
-                Icon(painter = painterResource(id = R.drawable.repeat_24px), contentDescription = "Repeat")
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceEvenly) {
+            IconButton(onClick = { playerModel.toggleRepeat() }) {
+                when(repeatState){
+                    Player.REPEAT_MODE_OFF -> {
+                        Icon(painter = painterResource(id = R.drawable.repeat_24px), contentDescription = "Repeat Off")
+                    }
+
+                    Player.REPEAT_MODE_ALL -> {
+                        Icon(painter = painterResource(id = R.drawable.repeat_on_24px), contentDescription = "Repeat All")
+                    }
+
+                    Player.REPEAT_MODE_ONE -> {
+                        Icon(painter = painterResource(id = R.drawable.repeat_one_on_24px), contentDescription = "Repeat One")
+                    }
+                }
             }
             IconButton(onClick = { playerModel.seekToPrevious() }) {
                 Icon(painter = painterResource(id = R.drawable.skip_previous_24px), contentDescription = "Previous")
             }
             FloatingActionButton(onClick = { playerModel.togglePlayback() }) {
                 if (isPlaying){
-                    Icon(painter = painterResource(id = R.drawable.pause_24px), contentDescription = "Play")
+                    Icon(painter = painterResource(id = R.drawable.pause_24px), contentDescription = "Pause")
                 } else {
                     Icon(painter = painterResource(id = R.drawable.play_arrow_24px), contentDescription = "Play")
                 }

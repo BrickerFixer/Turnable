@@ -26,6 +26,9 @@ class PlayerViewModel : ViewModel() {
     private val _shuffleModeEnabled = MutableLiveData<Boolean>()
     val shuffleModeEnabled: LiveData<Boolean> = _shuffleModeEnabled
 
+    private val _repeatMode = MutableLiveData<Int>()
+    val repeatMode: LiveData<Int> = _repeatMode
+
     private var mediaController: MediaController? = null
 
     fun initializeMediaController(context: Context, onInitialized: () -> Unit) {
@@ -36,9 +39,17 @@ class PlayerViewModel : ViewModel() {
                     _isPlaying.postValue(isPlaying)
                 }
 
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    super.onPlaybackStateChanged(playbackState)
+                }
+
                 override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                     _currentTrack.postValue(mediaMetadata.title.toString())
                     _currentArtist.postValue(mediaMetadata.artist.toString())
+                }
+
+                override fun onRepeatModeChanged(repeatMode: Int) {
+                    _repeatMode.postValue(repeatMode)
                 }
 
                 override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
@@ -51,14 +62,6 @@ class PlayerViewModel : ViewModel() {
             })
             onInitialized()
         }
-    }
-
-    fun play() {
-        mediaController?.play()
-    }
-
-    fun pause() {
-        mediaController?.pause()
     }
 
     fun togglePlayback() {
@@ -94,6 +97,26 @@ class PlayerViewModel : ViewModel() {
 
     fun getMediaItemAt(index: Int): MediaItem? {
         return mediaController?.getMediaItemAt(index)
+    }
+
+    fun seekTo(positionMs: Long){
+        mediaController?.seekTo(positionMs)
+    }
+
+    fun toggleRepeat(){
+        when(mediaController?.repeatMode){
+            Player.REPEAT_MODE_OFF -> {
+                mediaController?.repeatMode = Player.REPEAT_MODE_ALL
+            }
+
+            Player.REPEAT_MODE_ALL -> {
+                mediaController?.repeatMode = Player.REPEAT_MODE_ONE
+            }
+
+            Player.REPEAT_MODE_ONE -> {
+                mediaController?.repeatMode = Player.REPEAT_MODE_OFF
+            }
+        }
     }
 
     override fun onCleared() {
