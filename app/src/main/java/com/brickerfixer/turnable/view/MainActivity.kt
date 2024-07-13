@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.media3.common.Player
 import com.brickerfixer.turnable.ui.theme.TurnableTheme
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -27,6 +28,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.rounded.PlayCircle
 import androidx.compose.material.icons.rounded.Settings
@@ -37,11 +40,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Slider
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -160,17 +165,26 @@ fun Player(playerModel: PlayerViewModel) {
     val repeatState by playerModel.repeatMode.observeAsState(Player.REPEAT_MODE_OFF)
     val currentTrack by playerModel.currentTrack.observeAsState("")
     val currentArtist by playerModel.currentArtist.observeAsState("")
-    Column(verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
-        Card(onClick = { /*TODO*/ }, modifier = Modifier.size(270.dp)) {
-
+    Column(verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+        .fillMaxSize()
+        .padding(horizontal = 16.dp)) {
+        Card(modifier = Modifier.size(270.dp)) {
+            Image(painter = painterResource(id = R.drawable.artwork), contentDescription = "Artwork", modifier = Modifier.fillMaxSize())
         }
         Column (horizontalAlignment = Alignment.CenterHorizontally) {
             if (currentTrack != "" && currentArtist != ""){
                 Text(text = currentTrack.toString(), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
                 Text(text = currentArtist.toString(), Modifier.alpha(0.5f), textAlign = TextAlign.Center)
             } else {
-                Text(text = "Nothing playing", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                Text(text = "Please add a raw audio source through sources tab", Modifier.alpha(0.5f), textAlign = TextAlign.Center)
+                Text(text = stringResource(id = R.string.noplay), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                Text(text = stringResource(id = R.string.hint), Modifier.alpha(0.5f), textAlign = TextAlign.Center)
+            }
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+            Slider(value = 0f, onValueChange = {})
+            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                Text(text = "CURRENT_TIME")
+                Text(text = "MEDIA_LENGTH")
             }
         }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -215,6 +229,7 @@ fun Player(playerModel: PlayerViewModel) {
 
 @Composable
 fun Sources(playerModel: PlayerViewModel) {
+    val isPlaying by playerModel.isPlaying.observeAsState(false)
     Column (modifier = Modifier
         .padding(16.dp)
         .fillMaxSize()) {
@@ -233,9 +248,9 @@ fun Sources(playerModel: PlayerViewModel) {
         Column (modifier = Modifier
             .fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
             var text by remember { mutableStateOf("") }
-            LazyColumn(modifier = Modifier
+            LazyVerticalGrid(modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.8f)) {
+                .fillMaxHeight(0.8f), columns = GridCells.Adaptive(minSize = 128.dp)) {
                 // Add 5 items
                 items(20) { index ->
                     Text(text = "TRACK $index")
@@ -248,7 +263,8 @@ fun Sources(playerModel: PlayerViewModel) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
-            Button(onClick = { playerModel.addMediaItem(text) }, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = { if(text != ""){playerModel.addMediaItem(text)}
+                             if (!isPlaying){playerModel.play()}}, modifier = Modifier.fillMaxWidth()) {
                 Icon(painter = painterResource(id = R.drawable.add_circle_24px), contentDescription = "Add")
                 Text(text = "Add")
             }

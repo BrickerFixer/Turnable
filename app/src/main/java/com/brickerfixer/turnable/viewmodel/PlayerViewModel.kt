@@ -9,6 +9,7 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 
+
 class PlayerViewModel : ViewModel() {
 
     private val _mediaItemCount = MutableLiveData<Int>()
@@ -39,10 +40,6 @@ class PlayerViewModel : ViewModel() {
                     _isPlaying.postValue(isPlaying)
                 }
 
-                override fun onPlaybackStateChanged(playbackState: Int) {
-                    super.onPlaybackStateChanged(playbackState)
-                }
-
                 override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                     _currentTrack.postValue(mediaMetadata.title.toString())
                     _currentArtist.postValue(mediaMetadata.artist.toString())
@@ -62,6 +59,14 @@ class PlayerViewModel : ViewModel() {
             })
             onInitialized()
         }
+    }
+
+    fun play() {
+        mediaController?.play()
+    }
+
+    fun pause() {
+        mediaController?.pause()
     }
 
     fun togglePlayback() {
@@ -98,11 +103,6 @@ class PlayerViewModel : ViewModel() {
     fun getMediaItemAt(index: Int): MediaItem? {
         return mediaController?.getMediaItemAt(index)
     }
-
-    fun seekTo(positionMs: Long){
-        mediaController?.seekTo(positionMs)
-    }
-
     fun toggleRepeat(){
         when(mediaController?.repeatMode){
             Player.REPEAT_MODE_OFF -> {

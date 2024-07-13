@@ -53,6 +53,12 @@ android {
 }
 
 dependencies {
+    implementation(libs.hilt.android)
+    annotationProcessor(libs.hilt.compiler)
+    // Room
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.android.compiler)
+    //Icons
     implementation(libs.androidx.material.icons.extended)
     // Glide(???)
     implementation(libs.compose)

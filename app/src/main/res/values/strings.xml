@@ -4,7 +4,7 @@
     <string name="error">Playback error!</string>
     <string name="unknown_track">Unknown Track</string>
     <string name="unknown_artist">Unknown Artist</string>
-    <string name="hint">Please, add tracks through any tab at the bottom</string>
+    <string name="hint">Please, add tracks through sources tab at the bottom</string>
     <string name="noplay">No tracks playing</string>
     <string name="add">Add to queue</string>
     <string name="media_link">Link of media item</string>
@@ -21,4 +21,5 @@
     <string name="remove_everything">Remove everything</string>
     <string name="rm_hint_everything">Removed everything</string>
     <string name="picks">Try these hottest picks!</string>
-    <string name="add_short">add</string></resources>
+    <string name="add_short">add</string>
+</resources>

@@ -5,9 +5,11 @@ import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.room.Room.databaseBuilder
+import dagger.hilt.android.HiltAndroidApp
+
 
 class App : Application() {
-    private var database: TrackDatabase? = null
+    var database: TrackDatabase? = null
 
     @OptIn(UnstableApi::class)
     override fun onCreate() {

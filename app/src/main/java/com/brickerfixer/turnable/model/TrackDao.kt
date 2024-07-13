@@ -8,13 +8,12 @@ import androidx.room.Query
 
 @Dao
 interface TrackDao {
-    @Query("SELECT * FROM Track")
+    @Query("SELECT * FROM tracks")
     fun getAll(): List<Track>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     fun insert(track: Track)
     @Delete
     fun delete(track: Track)
-    @Query("DELETE FROM Track")
+    @Query("DELETE FROM tracks")
     fun deleteAll()
 }
