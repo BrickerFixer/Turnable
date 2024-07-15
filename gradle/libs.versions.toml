@@ -6,6 +6,7 @@ compose = "1.0.0-beta01"
 glide = "4.16.0"
 hiltAndroid = "2.51.1"
 hiltCompiler = "2.44"
+hiltCompilerVersion = "1.2.0"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -27,6 +28,7 @@ runtimeLivedata = "1.6.8"
 [libraries]
 android-compiler = { module = "android.arch.persistence.room:compiler", version.ref = "androidCompiler" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompilerVersion" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose" }
 androidx-navigation-dynamic-features-fragment = { module = "androidx.navigation:navigation-dynamic-features-fragment" }

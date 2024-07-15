@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp")
     alias(libs.plugins.compose.compiler)
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -53,17 +54,22 @@ android {
 }
 
 dependencies {
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
+    // Hilt i hate you goddamnit, why didn't you tell me to add a plugin
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
     implementation(libs.hilt.android)
-    annotationProcessor(libs.hilt.compiler)
     // Room
-    implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.android.compiler)
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
     //Icons
     implementation(libs.androidx.material.icons.extended)
     // Glide(???)
     implementation(libs.compose)
     implementation(libs.androidx.runtime.livedata)
-    annotationProcessor(libs.compiler)
+    ksp(libs.compiler)
     implementation(libs.glide)
     // Kotlin
     implementation(libs.androidx.navigation.fragment.ktx)

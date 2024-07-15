@@ -6,24 +6,7 @@ import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.room.Room.databaseBuilder
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
-
-class App : Application() {
-    var database: TrackDatabase? = null
-
-    @OptIn(UnstableApi::class)
-    override fun onCreate() {
-        super.onCreate()
-        instance = this
-        database = databaseBuilder(applicationContext, TrackDatabase::class.java, "trackdatabase")
-            .allowMainThreadQueries()
-            .build()
-        serviceIntent = Intent(this, ExoplayerService::class.java)
-        startService(serviceIntent)
-    }
-
-    companion object {
-        var instance: App? = null
-        var serviceIntent: Intent? = null
-    }
-}
+@HiltAndroidApp
+class App : Application() {}

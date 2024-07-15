@@ -1,6 +1,8 @@
 package com.brickerfixer.turnable.model
 
-class TrackRepository(private val trackDao: TrackDao) {
+import javax.inject.Inject
+
+class TrackRepository @Inject constructor(private val trackDao: TrackDao) {
     fun addNewItemToDB(mediaItemUri: String?) {
         val tr = Track(null, mediaItemUri)
         trackDao.insert(tr)

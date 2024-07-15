@@ -3,14 +3,29 @@ package com.brickerfixer.turnable.viewmodel
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
+import com.brickerfixer.turnable.model.App
+import com.brickerfixer.turnable.model.TrackRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class PlayerViewModel : ViewModel() {
+@HiltViewModel
+class PlayerViewModel @Inject constructor(val repository: TrackRepository) : ViewModel() {
 
     private val _mediaItemCount = MutableLiveData<Int>()
     val mediaItemCount: LiveData<Int> = _mediaItemCount
@@ -94,6 +109,9 @@ class PlayerViewModel : ViewModel() {
     fun addMediaItem(uri: String) {
         val mediaItem = MediaItem.fromUri(uri)
         mediaController?.addMediaItem(mediaItem)
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.addNewItemToDB(uri)
+        }
     }
 
     fun clearMediaItems() {

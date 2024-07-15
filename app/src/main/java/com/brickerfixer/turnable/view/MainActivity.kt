@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.media3.common.Player
 import com.brickerfixer.turnable.ui.theme.TurnableTheme
 import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -59,13 +60,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.brickerfixer.turnable.R
 import com.brickerfixer.turnable.viewmodel.PlayerViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var playerViewModel: PlayerViewModel
+
+    private val playerViewModel: PlayerViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        playerViewModel = ViewModelProvider(this)[PlayerViewModel::class.java]
         playerViewModel.initializeMediaController(this) {
             setContent {
                 TurnableTheme {
