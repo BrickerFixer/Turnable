@@ -10,7 +10,8 @@ import androidx.room.Query
 interface TrackDao {
     @Query("SELECT * FROM tracks")
     fun getAll(): List<Track>
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    //TODO: try to do something so it won't duplicate entries
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(track: Track)
     @Delete
     fun delete(track: Track)

@@ -51,7 +51,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -61,7 +60,6 @@ import androidx.navigation.compose.rememberNavController
 import com.brickerfixer.turnable.R
 import com.brickerfixer.turnable.viewmodel.PlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -251,13 +249,18 @@ fun Sources(playerModel: PlayerViewModel) {
         }
         Column (modifier = Modifier
             .fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
+            playerModel.updateAll()
             var text by remember { mutableStateOf("") }
             LazyVerticalGrid(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.8f), columns = GridCells.Adaptive(minSize = 128.dp)) {
-                // Add 5 items
-                items(20) { index ->
-                    Text(text = "TRACK $index")
+                items(playerModel.tracks.size) { index ->
+                    playerModel.tracks[index].uri?.let { PersistCard(
+                        title = it,
+                        artist = null,
+                        imageUri = null,
+                        playerViewModel = playerModel
+                    ) }
                 }
             }
             OutlinedTextField(

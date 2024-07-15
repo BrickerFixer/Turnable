@@ -15,6 +15,7 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import com.brickerfixer.turnable.model.App
+import com.brickerfixer.turnable.model.Track
 import com.brickerfixer.turnable.model.TrackRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +47,8 @@ class PlayerViewModel @Inject constructor(val repository: TrackRepository) : Vie
     val repeatMode: LiveData<Int> = _repeatMode
 
     private var mediaController: MediaController? = null
+
+    lateinit var tracks : List<Track>
 
     fun initializeMediaController(context: Context, onInitialized: () -> Unit) {
         MediaControllerManager.initialize(context) { controller ->
@@ -121,6 +124,12 @@ class PlayerViewModel @Inject constructor(val repository: TrackRepository) : Vie
     fun getMediaItemAt(index: Int): MediaItem? {
         return mediaController?.getMediaItemAt(index)
     }
+    fun updateAll() {
+        viewModelScope.launch(Dispatchers.IO) {
+            tracks = repository.getAll()
+        }
+    }
+
     fun toggleRepeat(){
         when(mediaController?.repeatMode){
             Player.REPEAT_MODE_OFF -> {
