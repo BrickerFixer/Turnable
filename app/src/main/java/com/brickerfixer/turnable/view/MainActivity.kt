@@ -21,7 +21,9 @@ import androidx.media3.common.Player
 import com.brickerfixer.turnable.ui.theme.TurnableTheme
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -160,6 +162,7 @@ sealed class NavRoutes(val route: String) {
     data object Settings : NavRoutes("settings")
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Player(playerModel: PlayerViewModel) {
     val isPlaying by playerModel.isPlaying.observeAsState(false)
@@ -167,6 +170,8 @@ fun Player(playerModel: PlayerViewModel) {
     val repeatState by playerModel.repeatMode.observeAsState(Player.REPEAT_MODE_OFF)
     val currentTrack by playerModel.currentTrack.observeAsState("")
     val currentArtist by playerModel.currentArtist.observeAsState("")
+    val currentPosition by playerModel.currentPosition.observeAsState(0L)
+    val trackDuration by playerModel.trackDuration.observeAsState(0L)
     Column(verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
         .fillMaxSize()
         .padding(horizontal = 16.dp)) {
@@ -175,7 +180,7 @@ fun Player(playerModel: PlayerViewModel) {
         }
         Column (horizontalAlignment = Alignment.CenterHorizontally) {
             if (currentTrack != "" && currentArtist != ""){
-                Text(text = currentTrack.toString(), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                Text(text = currentTrack.toString(), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, modifier = Modifier.basicMarquee())
                 Text(text = currentArtist.toString(), Modifier.alpha(0.5f), textAlign = TextAlign.Center)
             } else {
                 Text(text = stringResource(id = R.string.noplay), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
@@ -183,10 +188,10 @@ fun Player(playerModel: PlayerViewModel) {
             }
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            Slider(value = 0f, onValueChange = {})
+            Slider(value = currentPosition.toFloat(), onValueChange = {playerModel.seekTo(it.toLong())}, valueRange = 0f..trackDuration.toFloat())
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                Text(text = "CURRENT_TIME")
-                Text(text = "MEDIA_LENGTH")
+                Text(text = currentPosition.toString())
+                Text(text = trackDuration.toString())
             }
         }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceEvenly) {

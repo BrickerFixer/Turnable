@@ -3,24 +3,16 @@ package com.brickerfixer.turnable.viewmodel
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
-import com.brickerfixer.turnable.model.App
 import com.brickerfixer.turnable.model.Track
 import com.brickerfixer.turnable.model.TrackRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,6 +40,12 @@ class PlayerViewModel @Inject constructor(val repository: TrackRepository) : Vie
 
     private var mediaController: MediaController? = null
 
+    private val _currentPosition = MutableLiveData<Long>()
+    val currentPosition: LiveData<Long> = _currentPosition
+
+    private val _trackDuration = MutableLiveData<Long>()
+    val trackDuration: LiveData<Long> = _trackDuration
+
     lateinit var tracks : List<Track>
 
     fun initializeMediaController(context: Context, onInitialized: () -> Unit) {
@@ -61,6 +59,7 @@ class PlayerViewModel @Inject constructor(val repository: TrackRepository) : Vie
                 override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                     _currentTrack.postValue(mediaMetadata.title.toString())
                     _currentArtist.postValue(mediaMetadata.artist.toString())
+                    _trackDuration.postValue(mediaController?.duration)
                 }
 
                 override fun onRepeatModeChanged(repeatMode: Int) {
@@ -73,6 +72,19 @@ class PlayerViewModel @Inject constructor(val repository: TrackRepository) : Vie
 
                 override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                     _mediaItemCount.postValue(mediaController?.mediaItemCount ?: 0)
+                }
+
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    super.onPlaybackStateChanged(playbackState)
+                }
+
+                override fun onPositionDiscontinuity(
+                    oldPosition: Player.PositionInfo,
+                    newPosition: Player.PositionInfo,
+                    reason: Int
+                ) {
+                    super.onPositionDiscontinuity(oldPosition, newPosition, reason)
+                    _currentPosition.postValue(mediaController?.currentPosition)
                 }
             })
             onInitialized()
@@ -144,6 +156,11 @@ class PlayerViewModel @Inject constructor(val repository: TrackRepository) : Vie
                 mediaController?.repeatMode = Player.REPEAT_MODE_OFF
             }
         }
+    }
+
+    fun seekTo(position: Long) {
+        mediaController?.seekTo(position)
+        _currentPosition.postValue(position)
     }
 
     override fun onCleared() {
