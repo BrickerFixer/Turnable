@@ -1,6 +1,7 @@
 package com.brickerfixer.turnable.viewmodel
 
 import android.content.Context
+import android.media.session.PlaybackState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -59,7 +60,9 @@ class PlayerViewModel @Inject constructor(val repository: TrackRepository) : Vie
                 override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                     _currentTrack.postValue(mediaMetadata.title.toString())
                     _currentArtist.postValue(mediaMetadata.artist.toString())
-                    _trackDuration.postValue(mediaController?.duration)
+                    if (mediaMetadata.title != null){
+                        _trackDuration.postValue(mediaController?.duration)
+                    }
                 }
 
                 override fun onRepeatModeChanged(repeatMode: Int) {
@@ -140,6 +143,10 @@ class PlayerViewModel @Inject constructor(val repository: TrackRepository) : Vie
         viewModelScope.launch(Dispatchers.IO) {
             tracks = repository.getAll()
         }
+    }
+
+    fun removeItem(index: Int) {
+        mediaController?.removeMediaItem(index)
     }
 
     fun toggleRepeat(){
