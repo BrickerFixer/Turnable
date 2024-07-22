@@ -27,6 +27,9 @@ class PlayerViewModel @Inject constructor(val repository: TrackRepository) : Vie
     private val _isPlaying = MutableLiveData<Boolean>()
     val isPlaying: LiveData<Boolean> = _isPlaying
 
+    private val _playbackState = MutableLiveData<Int>()
+    val playbackState: LiveData<Int> = _playbackState
+
     private val _currentTrack = MutableLiveData<String?>()
     val currentTrack: LiveData<String?> = _currentTrack
 
@@ -79,6 +82,7 @@ class PlayerViewModel @Inject constructor(val repository: TrackRepository) : Vie
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     super.onPlaybackStateChanged(playbackState)
+                    _playbackState.postValue(playbackState)
                 }
 
                 override fun onPositionDiscontinuity(

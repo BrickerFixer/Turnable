@@ -1,5 +1,6 @@
 package com.brickerfixer.turnable.view
 
+import android.media.session.PlaybackState
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -166,6 +167,7 @@ sealed class NavRoutes(val route: String) {
 @Composable
 fun Player(playerModel: PlayerViewModel) {
     val isPlaying by playerModel.isPlaying.observeAsState(false)
+    val playbackState by playerModel.playbackState.observeAsState(PlaybackState.STATE_NONE)
     val isShuffling by playerModel.shuffleModeEnabled.observeAsState(false)
     val repeatState by playerModel.repeatMode.observeAsState(Player.REPEAT_MODE_OFF)
     val currentTrack by playerModel.currentTrack.observeAsState("")
@@ -214,10 +216,14 @@ fun Player(playerModel: PlayerViewModel) {
                 Icon(painter = painterResource(id = R.drawable.skip_previous_24px), contentDescription = "Previous")
             }
             FloatingActionButton(onClick = { playerModel.togglePlayback() }) {
-                if (isPlaying){
-                    Icon(painter = painterResource(id = R.drawable.pause_24px), contentDescription = "Pause")
+                if (playbackState == Player.STATE_BUFFERING){
+                    Icon(painter = painterResource(id = R.drawable.autorenew_24px), contentDescription = "Loading")
                 } else {
-                    Icon(painter = painterResource(id = R.drawable.play_arrow_24px), contentDescription = "Play")
+                    if (isPlaying){
+                        Icon(painter = painterResource(id = R.drawable.pause_24px), contentDescription = "Pause")
+                    } else {
+                        Icon(painter = painterResource(id = R.drawable.play_arrow_24px), contentDescription = "Play")
+                    }
                 }
             }
             IconButton(onClick = { playerModel.seekToNext() }) {

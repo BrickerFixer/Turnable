@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.0"
+agp = "8.5.1"
 androidCompiler = "1.1.1"
 compiler = "4.16.0"
 compose = "1.0.0-beta01"
