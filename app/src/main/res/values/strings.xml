@@ -1,25 +1,20 @@
 <resources>
     <string name="app_name">Turnable</string>
-    <string name="error_hint">Probably it\'s because the link doesn\'t have a raw mediafile, the mediaItem has been removed to not cause issues.</string>
+    <string name="error_hint">Probably it\'s because the link doesn\'t have a raw mediafile.</string>
     <string name="error">Playback error!</string>
     <string name="unknown_track">Unknown Track</string>
     <string name="unknown_artist">Unknown Artist</string>
     <string name="hint">Please, add tracks through sources tab at the bottom</string>
     <string name="noplay">No tracks playing</string>
     <string name="add">Add to queue</string>
-    <string name="media_link">Link of media item</string>
-    <string name="storagebt">Add from storage…</string>
-    <string name="channel_name">Player notification</string>
-    <string name="channel_desc">Shows a miniature player in a notification shade</string>
-    <string name="resume_tip">Resuming playback… (BETA! ONLY WORKS WITH WEB URIS!)</string>
-    <string name="added_tip">Added track to queue…</string>
-    <string name="starting_tip">Added track, starting playback…</string>
-    <string name="err_db_tip">Removed everything from persistent db</string>
-    <string name="NullPointerErr">Unexpected Failure (NullPointerException)</string>
-    <string name="tip_remove">Removed current mediaItem</string>
-    <string name="removeexacttrack">"Removed track number "</string>
-    <string name="remove_everything">Remove everything</string>
-    <string name="rm_hint_everything">Removed everything</string>
-    <string name="picks">Try these hottest picks!</string>
-    <string name="add_short">add</string>
+    <string name="add_short">Add</string>
+    <string name="scan">Scan network</string>
+    <string name="local">Local storage</string>
+    <string name="clear_all">Clear all</string>
+    <string name="empty">Queue is empty!</string>
+    <string name="track_url">Track URL</string>
+    <string name="player">Player</string>
+    <string name="queue">Queue</string>
+    <string name="sources">Sources</string>
+    <string name="settings">Settings</string>
 </resources>

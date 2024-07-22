@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Turnable</string>
+    <string name="settings">Настройки</string>
+    <string name="error_hint">По всей видимости, ссылка не ведёт на файл.</string>
+    <string name="error">Ошибка воспроизведения!</string>
+    <string name="unknown_track">Неизвестный Трек</string>
+    <string name="unknown_artist">Неизвестный Исполнитель</string>
+    <string name="hint">Пожалуйста, добавьте треки с помощью вкладки источников.</string>
+    <string name="noplay">Ничего не играет</string>
+    <string name="add">Добавить в очередь</string>
+    <string name="add_short">Добавить</string>
+    <string name="scan">Сканировать сеть</string>
+    <string name="local">Внутр. память</string>
+    <string name="clear_all">Очистить всё</string>
+    <string name="empty">Очередь пуста!</string>
+    <string name="track_url">Ссылка на трек</string>
+    <string name="player">Плеер</string>
+    <string name="queue">Очередь</string>
+    <string name="sources">Источники</string>
 </resources>

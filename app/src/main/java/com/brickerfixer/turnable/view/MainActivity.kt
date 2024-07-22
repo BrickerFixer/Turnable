@@ -1,5 +1,6 @@
 package com.brickerfixer.turnable.view
 
+import android.content.Context
 import android.media.session.PlaybackState
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -49,6 +50,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -103,7 +105,7 @@ fun BottomNavigationBar(navController: NavController) {
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route
 
-        NavBarItems.BarItems.forEach { navItem ->
+        NavBarItems.getBarItems(LocalContext.current).forEach { navItem ->
             NavigationBarItem(
                 selected = currentRoute == navItem.route,
                 onClick = {
@@ -126,28 +128,30 @@ fun BottomNavigationBar(navController: NavController) {
 }
 
 object NavBarItems {
-    val BarItems = listOf(
+    fun getBarItems(context: Context): List<BarItem> {
+    return listOf(
         BarItem(
-            title = "Player",
+            title = context.getString(R.string.player),
             image = Icons.Rounded.PlayCircle,
             route = "player"
         ),
         BarItem(
-            title = "Queue",
+            title = context.getString(R.string.queue),
             image = Icons.AutoMirrored.Rounded.QueueMusic,
             route = "queue"
         ),
         BarItem(
-            title = "Sources",
+            title = context.getString(R.string.sources),
             image = Icons.Rounded.Source,
             route = "sources"
         ),
         BarItem(
-            title = "Settings",
+            title = context.getString(R.string.settings),
             image = Icons.Rounded.Settings,
             route = "settings"
     )
     )
+    }
 }
 
 data class BarItem(
@@ -250,12 +254,12 @@ fun Sources(playerModel: PlayerViewModel) {
             Button(onClick = { /*TODO*/ }, modifier = Modifier
                 .fillMaxWidth(0.5f)
                 .padding(end = 4.dp)) {
-                Text(text = "Scan network")
+                Text(text = stringResource(R.string.scan))
             }
             Button(onClick = { /*TODO*/ }, modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 4.dp)) {
-                Text(text = "Local storage")
+                Text(text = stringResource(R.string.local))
             }
         }
         Column (modifier = Modifier
@@ -277,14 +281,14 @@ fun Sources(playerModel: PlayerViewModel) {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
-                label = { Text("track URI") },
+                label = { Text(stringResource(R.string.track_url)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
             Button(onClick = { if(text != ""){playerModel.addMediaItem(text)}
                              if (!isPlaying){playerModel.play()}}, modifier = Modifier.fillMaxWidth()) {
                 Icon(painter = painterResource(id = R.drawable.add_circle_24px), contentDescription = "Add")
-                Text(text = "Add")
+                Text(text = stringResource(id = R.string.add))
             }
         }
     }
@@ -302,7 +306,7 @@ fun Queue(playerModel: PlayerViewModel) {
     val itemCount by playerModel.mediaItemCount.observeAsState(0)
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 16.dp)) {
         if (itemCount == 0){
-            Text(text = "Queue is empty!")
+            Text(text = stringResource(R.string.empty))
         } else {
             LazyColumn (modifier = Modifier.fillMaxWidth()) {
                 items(itemCount){ index ->
@@ -310,7 +314,7 @@ fun Queue(playerModel: PlayerViewModel) {
                 }
             }
             Button(onClick = { playerModel.clearMediaItems() }, modifier = Modifier.fillMaxWidth()) {
-                Text(text = "Clear all")
+                Text(text = stringResource(R.string.clear_all))
             }
         }
     }
